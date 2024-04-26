@@ -31,11 +31,13 @@ public class ChoreListManager {
 	private static ChoreListManager instance; 
 	private Map<FamilyMember, List<Chores>> assignedChores; 
     private CircularChoreList sharedChores;
+    private List<Chores> allChores;
     
     // constructor
     private ChoreListManager() {
         assignedChores = new HashMap<>();
         sharedChores = new CircularChoreList();
+        allChores = new ArrayList<>();
     }
     
     public static ChoreListManager getInstance() { 
@@ -54,14 +56,16 @@ public class ChoreListManager {
         } else {
             sharedChores.add(chore);
         }
+        allChores.add(chore);
     }
-    
-    // deletes chore
+ 	
+	// deletes chore from sharedChore list, assignedChore list, and allChore list
 	public void deleteChore(Chores chore) {
 	    sharedChores.deleteChore(chore);
 	    for (List<Chores> chores : assignedChores.values()) {
 	        chores.remove(chore);
 	    }
+	    allChores.remove(chore);
 	}
 	
     // rotating shared chores 
@@ -115,6 +119,11 @@ public class ChoreListManager {
         return sharedChores.toList();
     }
     
+    // returns list of allChores
+	public List<Chores> getAllChores() {
+		return allChores;
+	}
+    
     // call complete chore method that sets chore to true and updates reward points
     public void completeChore(Chores chore) {
         if (chore.getAssignedTo() != null && !chore.complete()) {
@@ -124,7 +133,7 @@ public class ChoreListManager {
     
     // searching for chore by name
     public Chores findChoreByName(String choreName) {
-        List<Chores> chores = ChoreListManager.getInstance().getSharedChores();
+        List<Chores> chores = ChoreListManager.getInstance().getAllChores();
         for (Chores chore : chores) {
             if (chore.getChoreName().equals(choreName)) {
                 return chore;

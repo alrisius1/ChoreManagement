@@ -72,9 +72,10 @@ public class FamilyMemberList {
     // using insertion sort to sort members descending based on reward points
     public void sortMembersByPoints() {
         for (int i = 1; i < household.size(); i++) {
+        	// object to insert
             FamilyMember key = household.get(i);
             int j = i - 1;
-
+            // finding correct spot to place incoming object - shifting objects to the right
             while (j >= 0 && household.get(j).getRewardPoints() < key.getRewardPoints()) {
             	household.set(j + 1, household.get(j));
                 j = j - 1;

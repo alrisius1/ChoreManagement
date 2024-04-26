@@ -111,7 +111,7 @@ public class manageFamilyMembers extends JDialog {
 			public void actionPerformed(ActionEvent e) {
 				String name = nameTxtField.getText().trim();
 				String ageText = ageTxtField.getText().trim();
-				int age = 0; 
+				int age; 
 				
 				// convert to int -> create new member -> successful box -> refresh
 		        try {
@@ -140,36 +140,37 @@ public class manageFamilyMembers extends JDialog {
 		        String selectedName = (String) comboBox.getSelectedItem();
 		        String newName = nameTxtField.getText().trim();
 		        String ageText = ageTxtField.getText().trim();
-		        int newAge = 0; 
+		        int newAge; 
 				
 			    // convert to int 
 		        try {
 		        	newAge = Integer.parseInt(ageText);
+		        	// finding member to update
+			        FamilyMember memberToUpdate = null; 
+			        for (FamilyMember fm : FamilyMemberList.getInstance().getHousehold()) { 
+			        	if (fm.getName().equals(selectedName)) { 
+			        		memberToUpdate = fm; 
+			        		break; 
+			        	} 
+			        } 
+			        
+			        // updating specified member and refreshing drop down box
+			        if (memberToUpdate != null) {
+			            memberToUpdate.setName(newName);
+			            memberToUpdate.setAge(newAge);
+			            
+			            refreshFMDropdown();
+			            mainFrame.refreshFMDropdown();
+			            JOptionPane.showMessageDialog(manageFamilyMembers.this, "Family member updated successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
+			        } else { 
+			        	JOptionPane.showMessageDialog(manageFamilyMembers.this, "Family member not selected.", "Error", JOptionPane.ERROR_MESSAGE);
+			        }
 		        // if not int -> error box
 		        } catch (NumberFormatException ex) {
 		            JOptionPane.showMessageDialog(manageFamilyMembers.this, "Please enter a valid age.", "Error", JOptionPane.ERROR_MESSAGE);
 		        }
 						
-		        // finding member to update
-		        FamilyMember memberToUpdate = null; 
-		        for (FamilyMember fm : FamilyMemberList.getInstance().getHousehold()) { 
-		        	if (fm.getName().equals(selectedName)) { 
-		        		memberToUpdate = fm; 
-		        		break; 
-		        	} 
-		        } 
-		        
-		        // updating specified member and refreshing drop down box
-		        if (memberToUpdate != null) {
-		            memberToUpdate.setName(newName);
-		            memberToUpdate.setAge(newAge);
-		            
-		            refreshFMDropdown();
-		            mainFrame.refreshFMDropdown();
-		            JOptionPane.showMessageDialog(manageFamilyMembers.this, "Family member updated successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
-		        } else { 
-		        	JOptionPane.showMessageDialog(manageFamilyMembers.this, "Family member not selected.", "Error", JOptionPane.ERROR_MESSAGE);
-		        }
+		       
 			}
 		});
 		updatebtn.setFont(new Font("Cooper Black", Font.PLAIN, 12));

@@ -85,7 +85,7 @@ public class manageChores extends JDialog {
 				            return; 
 				        }
 				        // finding specified chore -> setting chore info to field boxes
-				        Chores selectedChore = findChoreByName(selectedChoreName);
+				        Chores selectedChore = ChoreListManager.getInstance().findChoreByName(selectedChoreName);
 				        if (selectedChore != null) {
 				            choreNameField.setText(selectedChore.getChoreName());
 				            priorityDropdown.setSelectedItem(selectedChore.getPriority());
@@ -222,22 +222,15 @@ public class manageChores extends JDialog {
 			        try {
 			            rewardPoints = Integer.parseInt(newChorePointsTxt);
 			            // find chore and update
-			            boolean found = false;
-			            for (Chores chore : ChoreListManager.getInstance().getSharedChores()) {
-			                if (chore.getChoreName().equals(selectedChoreName)) {
-			                    chore.setChoreName(newName);
-			                    chore.setPriority(newPriority);
-			                    chore.setAssignedTo(newAssignedTo);  
-			                    chore.setChorePoints(rewardPoints);
-			                    found = true;
-			                    break;
-			                }
-			            }
-			            if (found) {
-			                // update chore dropdown and success message
+			            // finding chore by name
+				        Chores selectedChore = ChoreListManager.getInstance().findChoreByName(selectedChoreName);
+			            if (selectedChore != null) {
+			            	selectedChore.setChoreName(newName);
+			            	selectedChore.setPriority(newPriority);
+			            	selectedChore.setAssignedTo(newAssignedTo);  
+			            	selectedChore.setChorePoints(rewardPoints);
 			                refreshChoreDropdown(); 
 			                JOptionPane.showMessageDialog(manageChores.this, "Chore updated successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
-
 			                // clear text fields
 			                choreNameField.setText("");
 			                chorePointsField.setText("");
@@ -328,23 +321,13 @@ public class manageChores extends JDialog {
 	private void refreshChoreDropdown() { 
 		choreDropdown.removeAllItems();
 		choreDropdown.addItem("");
-		List<Chores> sharedChores = ChoreListManager.getInstance().getSharedChores();
-		for (Chores chore : sharedChores) {
+		List<Chores> allChores = ChoreListManager.getInstance().getAllChores();
+		for (Chores chore : allChores) {
 			choreDropdown.addItem(chore.getChoreName());
 		}
-		if (!sharedChores.isEmpty()) { 
+		if (!allChores.isEmpty()) { 
 			choreDropdown.setSelectedIndex(0);
 		}
 	}
-	
-	// finds the chore by name 
-	private Chores findChoreByName(String choreName) {
-	    List<Chores> chores = ChoreListManager.getInstance().getSharedChores();
-	    for (Chores chore : chores) {
-	        if (chore.getChoreName().equals(choreName)) {
-	            return chore;
-	        }
-	    }
-	    return null; 
-	}
+
 }
